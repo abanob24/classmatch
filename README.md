@@ -139,7 +139,7 @@ What surprised me: how different this guardrail felt from CineVault's, even thou
 I built this with Claude as a development partner — the API route, the matching logic and guardrail, the component, and the full test suite were built collaboratively with Claude in a single working session. What I checked myself: I ran the build, the typecheck, and all 10 tests locally and confirmed they pass before treating this as done, and I personally tested the live deployment end-to-end (including the empty-input and broken-API-key cases) rather than trusting the code alone.
 
 ---
-Built by [Abanob Morcos](https://github.com/abanob24) for a frontend capstone.| Hint text linked via `aria-describedby` | Pass |
+Built by [Abanob Morcos](https://github.com/abanob24) for a frontend capstone.
 | Errors announced via `role="alert"` | Pass |
 | Result region uses `aria-live="polite"` and receives programmatic focus | Pass |
 | Visible focus indicator on all interactive elements (`:focus-visible`) | Pass |
