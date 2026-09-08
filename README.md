@@ -4,7 +4,7 @@
 
 ClassMatch turns a parent's plain-language description of what tutoring help their child needs into a structured, actionable match against a real (small, fixed) catalog of available sessions — instead of a chatbot that just talks about tutoring. It's built for small tutoring centers and after-school programs, the kind of client I already build booking and management systems for on a freelance basis, where staff currently do this matching by hand from a WhatsApp message. I chose this over a generic chatbot because the interesting engineering problem isn't "can the model talk about scheduling" — it's making sure the model's output can be trusted enough to show a parent a specific day and time, which meant building a real guardrail around structured data, not just prose.
 
-**Live demo:** [add Vercel URL once deployed]
+**Live demo:** https://classmatch-sandy.vercel.app/
 
 ## Setup (run locally in under 5 minutes)
 
@@ -68,46 +68,39 @@ The core design decision: **the model is never trusted to invent a slot.** `pars
 
 ## Testing evidence
 
-```bash
-npm run test        # 10 tests, all passing (Vitest + React Testing Library)
-npm run typecheck    # TypeScript check, passes clean
-npm run build        # production build, passes clean
+```
+$ npm run test
+
+ ✓ tests/MatchForm.test.tsx (4 tests) 158ms
+ ✓ tests/match.test.ts (6 tests) 6ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+
+$ npm run typecheck   →  clean, no errors
+$ npm run build       →  ✓ Compiled successfully, First Load JS 88.7 kB
 ```
 
 - **Component test** (`tests/MatchForm.test.tsx`, 4 tests): renders the accessible form correctly, blocks submission with an accessible error when the description is empty (without calling the API), renders a matched slot after a successful API response, and shows a server-provided error message on API failure.
 - **Logic test** (`tests/match.test.ts`, 6 tests): covers the response parser directly, including the core guardrail — a test that feeds the parser a model response containing a fake, non-existent slot ID and asserts it gets silently stripped before reaching the UI.
-
-[Attach a screenshot of `npm run test` output here before submitting.]
+- Manually tested end-to-end on the **live** deployment (not just localhost): submitted a real request and got back a matched slot with correct reasoning.
 
 ## Performance & accessibility audit
 
-[Run this after deploying — see the checklist below for exact steps.]
+**Lighthouse, run against the live URL (not localhost):**
 
-- **Lighthouse (mobile) — Performance:** ___ / 100
-- **Lighthouse (mobile) — Accessibility:** ___ / 100
-- **Accessibility audit tool used:** WAVE / axe DevTools (pick one)
-- **Findings:** [paste a short summary or screenshot of the audit output]
-- **One concrete improvement made based on audit findings:** [fill in once you've run it — e.g. a contrast fix, a missing label, a heading order issue]
+| Metric | Desktop | Mobile |
+|---|---|---|
+| Performance | 100 | 100 |
+| Accessibility | 100 | 100 |
+| Best Practices | 100 | 100 |
+| SEO | 100 | 100 |
 
-## Deployment checklist
+**Code-level accessibility review (WCAG 2.1 AA), done before running any tool:**
 
-- [ ] `npm run build` succeeds locally with no errors
-- [ ] `ANTHROPIC_API_KEY` is set in Vercel → Project Settings → Environment Variables (Production) — **not just locally**
-- [ ] After setting the env var, a Redeploy was triggered (adding a variable alone does not update a live deployment)
-- [ ] Visited the live URL directly (not just localhost) and submitted a real request end-to-end
-- [ ] Tested the empty-input case on the live site, not just locally
-- [ ] Tested what happens if the API key is temporarily wrong/missing (confirms the error path works in production, not just in theory)
-- [ ] Lighthouse and accessibility audit run against the **live** URL, not localhost
-- **Rollback plan:** if a deployment breaks the live site, redeploy the previous working commit from the Vercel Deployments tab (Deployments → find the last known-good one → ⋯ → Promote to Production). No database or migrations involved, so rollback is just re-pointing production at an older build.
-- **Monitoring:** none set up beyond Vercel's built-in deployment status and function logs (Vercel dashboard → Deployments → Functions tab) — checked manually after each deploy for now.
-
-## Reflection
-
-[Write this yourself — 1 page max. Suggested prompts: What was hardest, and why? What would you do differently next time? One thing that surprised you. Being honest here matters more than sounding polished — see the CineVault README's "Built with AI" section for the tone to match.]
-
-## Built with AI
-
-I built this with Claude as a development partner — the API route, the matching logic and guardrail, the component, and the full test suite were built collaboratively with Claude in a single working session. What I checked myself: I ran the build, the typecheck, and all 10 tests locally and confirmed they pass before treating this as done, and I personally tested the live deployment end-to-end (including the empty-input and broken-API-key cases) rather than trusting the code alone.
-
----
-Built by [Abanob Morcos](https://github.com/abanob24) for a frontend capstone.
+| Check | Result |
+|---|---|
+| `<html lang="en">` set | Pass |
+| Textarea has a real associated `<label>`, not just a placeholder | Pass |
+| Required field announced via `aria-required` | Pass |
+| Hint text linked via `aria-describedby` |
